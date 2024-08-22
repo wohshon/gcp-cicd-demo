@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build docker image
+  entrypoint: 'sh'
+  args:
+  - -xe
+  - -c
+  - |
+    docker build \
+    --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:${SHORT_SHA} \
+    --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest \
+    -f ${_DOCKERFILE_PATH} \
