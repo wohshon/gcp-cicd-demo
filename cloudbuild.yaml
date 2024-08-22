@@ -8,5 +8,4 @@ steps:
   - |
     docker build \
     --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:${SHORT_SHA} \
-    --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest \
-    -f ${_DOCKERFILE_PATH} \
+    --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest .
