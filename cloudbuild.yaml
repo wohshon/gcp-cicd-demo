@@ -29,5 +29,5 @@ steps:
                         --delivery-pipeline=my-app-pipeline \
                         --skaffold-file=skaffold.yaml
 
-  options:
-     requestedVerifyOption: VERIFY_REQUESTED
+options:
+    requestedVerifyOption: VERIFY_REQUESTED
