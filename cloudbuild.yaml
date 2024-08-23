@@ -30,4 +30,4 @@ steps:
                         --skaffold-file=skaffold.yaml
 
 options:
-    requestedVerifyOption: VERIFY
+    requestedVerifyOption: VERIFIED
