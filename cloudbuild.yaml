@@ -1,14 +1,15 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Build docker image
-  entrypoint: 'sh'
-  args:
-  - -xe
-  - -c
-  - |
-    docker build \
-    --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:${SHORT_SHA} \
-    --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest .
+  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:${SHORT_SHA}', '-f', 'DOCKERFILE_PATH', '.' ]
+  options:
+     requestedVerifyOption: VERIFY_REQUESTED
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build docker image
+  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '-f', 'DOCKERFILE_PATH', '.' ]
+  options:
+     requestedVerifyOption: VERIFY_REQUESTED
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with SHA tag
