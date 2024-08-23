@@ -17,3 +17,16 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with latest tag
   args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest']
+
+- name: 'google/cloud-sdk:latest'
+  id: Trigger Cloud Deploy
+  entrypoint: 'sh'
+  args:
+  - -xe
+  - -c
+  - |
+    gcloud config set deploy/region ${_REGION}
+    gcloud deploy apply --file clouddeploy-pipeline.yaml
+    gcloud deploy releases create ${_IMAGE}-$SHORT_SHA \
+                        --delivery-pipeline=my-app-pipeline \
+                        --skaffold-file=skaffold.yaml
