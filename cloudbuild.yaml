@@ -2,14 +2,11 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Build docker image
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:${SHORT_SHA}', '-f', 'DOCKERFILE_PATH', '.' ]
-  options:
-     requestedVerifyOption: VERIFY_REQUESTED
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Build docker image
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '-f', 'DOCKERFILE_PATH', '.' ]
-  options:
-     requestedVerifyOption: VERIFY_REQUESTED
+
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with SHA tag
@@ -31,3 +28,6 @@ steps:
     gcloud deploy releases create ${_IMAGE}-$SHORT_SHA \
                         --delivery-pipeline=my-app-pipeline \
                         --skaffold-file=skaffold.yaml
+
+  options:
+     requestedVerifyOption: VERIFY_REQUESTED
