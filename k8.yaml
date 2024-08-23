@@ -27,7 +27,7 @@ spec:
         app: app1
     spec:
       containers:
-      - image: asia-southeast1-docker.pkg.dev/sandbox-project-1673797795/demoapp-repo/app1:mcs-test-v1
+      - image: asia-southeast1-docker.pkg.dev/sandbox-project-1673797795/demoapp-repo/my-app:latest
         name: app1
         env:
         - name: PORT
