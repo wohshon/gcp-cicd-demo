@@ -18,7 +18,7 @@ steps:
   - |
     gcloud beta container binauthz attestations sign-and-create \
       --project='$PROJECT_ID' \
-      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$COMMIT_SHA' \
+      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}@sha256:$COMMIT_SHA' \
       --attestor='projects/${PROJECT_ID}/attestors/built-by-cloud-build' \
       --attestor-project='$PROJECT_ID' \
       --keyversion-project='verified-builder' \
