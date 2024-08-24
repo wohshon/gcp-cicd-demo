@@ -6,8 +6,8 @@ steps:
 
 
 - name: 'gcr.io/cloud-builders/docker'
-  id: Build docker image - latest
-  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '.' ]
+  id: Build docker image - SHA
+  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHA', '.' ]
 
 - id: test
   name: 'google/cloud-sdk:latest'
@@ -18,7 +18,7 @@ steps:
   - |
     gcloud beta container binauthz attestations sign-and-create \
       --project='$PROJECT_ID' \
-      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA' \
+      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHA' \
       --attestor='projects/${PROJECT_ID}/attestors/built-by-cloud-build' \
       --attestor-project='$PROJECT_ID' \
       --keyversion-project='verified-builder' \
@@ -32,8 +32,8 @@ steps:
   args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA']
 
 - name: 'gcr.io/cloud-builders/docker'
-  id: Push docker image with latest tag
-  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest']
+  id: Push docker image with full digest tag
+  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHA']
 
 # hack
 - name: 'google/cloud-sdk:latest'
@@ -41,7 +41,7 @@ steps:
   entrypoint: 'sh'
   args:
   - |
-    sed -i "s/my-app:latest/my-app:${SHORT_SHA}/g" k8.yaml
+    sed -i "s/my-app:latest/my-app:${SHA}/g" k8.yaml
 
 - name: 'google/cloud-sdk:latest'
   id: Trigger Cloud Deploy
