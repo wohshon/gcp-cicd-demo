@@ -7,6 +7,15 @@ steps:
   id: Build docker image - latest
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '.' ]
 
+- id: 'create-attestation'
+  name: 'gcr.io/${PROJECT_ID}/binauthz-attestation:latest'
+  args:
+    - '--artifact-url'
+    - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest'
+    - '--attestor'
+    - 'projects/${PROJECT_ID}/attestors/built-by-cloud-build'
+    - '--keyversion'
+    - 'projects/verified-builder/locations/asia-southeast1/keyRings/attestor/cryptoKeys/builtByGCB/cryptoKeyVersions/1'
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with SHA tag
