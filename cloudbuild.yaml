@@ -1,21 +1,31 @@
 steps:
+
 - name: 'gcr.io/cloud-builders/docker'
-  id: Build docker image - SHORT_SHA
-  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:${SHORT_SHA}', '.' ]
+  id: Build docker image - latest
+  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA', '.' ]
+
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Build docker image - latest
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '.' ]
 
-- id: 'create-attestation'
-  name: 'gcr.io/${PROJECT_ID}/binauthz-attestation:latest'
+- id: test
+  name: 'google/cloud-sdk:latest'
+  entrypoint: 'sh'
   args:
-    - '--artifact-url'
-    - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest'
-    - '--attestor'
-    - 'projects/${PROJECT_ID}/attestors/built-by-cloud-build'
-    - '--keyversion'
-    - 'projects/verified-builder/locations/asia-southeast1/keyRings/attestor/cryptoKeys/builtByGCB/cryptoKeyVersions/1'
+  - -xe
+  - -c
+  - |
+    gcloud beta container binauthz attestations sign-and-create \
+      --project='$PROJECT_ID' \
+      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest' \
+      --attestor='projects/${PROJECT_ID}/attestors/built-by-cloud-build' \
+      --attestor-project='$PROJECT_ID' \
+      --keyversion-project='verified-builder' \
+      --keyversion-location='${_REGION}' \
+      --keyversion-keyring='attestor' \
+      --keyversion-key='builtByGCB' \
+      --keyversion='1'
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with SHA tag
@@ -24,6 +34,14 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with latest tag
   args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest']
+
+# hack
+- name: 'google/cloud-sdk:latest'
+  id: inject sha
+  entrypoint: 'sh'
+  args:
+  - |
+    sed -i "s/my-app:latest/my-app:${SHORT_SHA}/g" k8.yaml
 
 - name: 'google/cloud-sdk:latest'
   id: Trigger Cloud Deploy
