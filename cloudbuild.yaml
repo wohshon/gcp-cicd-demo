@@ -5,16 +5,9 @@ steps:
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA', '.' ]
 
 - name: 'gcr.io/cloud-builders/docker'
-  id: Build docker image - latest
-  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '.' ]
-
-- name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with SHA tag
   args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA']
 
-- name: 'gcr.io/cloud-builders/docker'
-  id: Push docker image with latest digest tag
-  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest']
 
 - name: 'google/cloud-sdk:latest'
   id: get digest
@@ -23,7 +16,7 @@ steps:
   - -xe
   - -c
   - |
-    gcloud builds describe $BUILD_ID  --region ${_REGION} --format 'value(results.images[0].digest)' > /workspace/digest
+    gcloud artifacts docker images list ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --sort-by=UPDATE_TIME --limit=1 --format="value(DIGEST)" > /workspace/digest
 
 - id: attestation
   name: 'google/cloud-sdk:latest'
