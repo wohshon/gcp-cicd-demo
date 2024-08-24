@@ -51,7 +51,7 @@ steps:
   entrypoint: 'sh'
   args:
   - |
-    sed -i "s/my-app:latest/my-app:${SHORT_SHA}/g" k8.yaml
+    sed -i "s/my-app:latest/my-app:${SHORT_SHA}/g" ./k8.yaml
 
 - name: 'google/cloud-sdk:latest'
   id: Trigger Cloud Deploy
