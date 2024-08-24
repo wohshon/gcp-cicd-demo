@@ -19,7 +19,7 @@ steps:
     gcloud artifacts docker images list ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --sort-by='UPDATE_TIME' --limit=1 --format='value(DIGEST)' > /workspace/digest
 
 - name: 'google/cloud-sdk:latest'
-  id: get digest
+  id: get digest test
   entrypoint: 'sh'
   args:
   - -xe
