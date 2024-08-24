@@ -10,8 +10,20 @@ steps:
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '.' ]
 
 - name: 'gcr.io/cloud-builders/docker'
+  id: Push docker image with SHA tag
+  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push docker image with latest digest tag
+  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest']
+
+- name: 'google/cloud-sdk:latest'
   id: get digest
-  args: [ 'inspect', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}', '--format', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@{{.Id}}','>','image_with_digest' ]
+  args:
+  - -xe
+  - -c
+  - |
+    gcloud artifacts docker images describe  ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA --format 'value(image_summary.digest)' > /workspace/digest
 
 - id: test
   name: 'google/cloud-sdk:latest'
@@ -22,7 +34,7 @@ steps:
   - |
     gcloud beta container binauthz attestations sign-and-create \
       --project='$PROJECT_ID' \
-      --artifact-url=$(cat image_with_digest) \
+      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@$(cat /workspace/digest)' \
       --attestor='projects/${PROJECT_ID}/attestors/built-by-cloud-build' \
       --attestor-project='$PROJECT_ID' \
       --keyversion-project='verified-builder' \
@@ -30,14 +42,6 @@ steps:
       --keyversion-keyring='attestor' \
       --keyversion-key='builtByGCB' \
       --keyversion='1'
-
-- name: 'gcr.io/cloud-builders/docker'
-  id: Push docker image with SHA tag
-  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA']
-
-- name: 'gcr.io/cloud-builders/docker'
-  id: Push docker image with latest digest tag
-  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest']
 
 # hack
 - name: 'google/cloud-sdk:latest'
