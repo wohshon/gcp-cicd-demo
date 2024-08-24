@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: skaffold/v4beta11
+apiVersion: skaffold/v2beta16
 kind: Config
 deploy:
   kubectl:
-    remoteManifests: [k8.yaml]
+    manifests:
+      - k8.yaml
