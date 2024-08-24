@@ -54,6 +54,8 @@ steps:
   id: inject sha
   entrypoint: 'sh'
   args:
+  - -xe
+  - -c
   - |
     sed -i "s/my-app:latest/my-app:${SHORT_SHA}/g" k8.yaml
 
