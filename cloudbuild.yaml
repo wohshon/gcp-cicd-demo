@@ -13,7 +13,8 @@ steps:
   id: get digest
   script: |
       #!/bin/sh
-      docker inspect ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --format "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@{{.Id}}" >image_with_digest
+      set -e
+      docker inspect "$_REGION-docker.pkg.dev/$PROJECT_ID/$_ART_REGISTRY/$_IMAGE" --format "$_REGION-docker.pkg.dev/$PROJECT_ID/$_ART_REGISTRY/$_IMAGE@{{.Id}}" >image_with_digest
 
 - id: test
   name: 'google/cloud-sdk:latest'
