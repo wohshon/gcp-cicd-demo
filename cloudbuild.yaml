@@ -16,7 +16,16 @@ steps:
   - -xe
   - -c
   - |
-    gcloud artifacts docker images list ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --sort-by=UPDATE_TIME --limit=1 --format="value(DIGEST)" > /workspace/digest
+    gcloud artifacts docker images list ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --sort-by='UPDATE_TIME' --limit=1 --format='value(DIGEST)' > /workspace/digest
+
+- name: 'google/cloud-sdk:latest'
+  id: get digest
+  entrypoint: 'sh'
+  args:
+  - -xe
+  - -c
+  - |
+    echo  $(cat /workspace/digest)
 
 - id: attestation
   name: 'google/cloud-sdk:latest'
