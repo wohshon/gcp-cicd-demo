@@ -24,7 +24,7 @@ steps:
   - -xe
   - -c
   - |
-    gcloud builds describe $BUILD_ID --format json \| jq -r '.results.images[] | select(.name=="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA") | .digest' > /workspace/digest
+    gcloud builds describe $BUILD_ID --format json | jq -r '.results.images[] | select(.name=="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA") | .digest' > /workspace/digest
 
 - id: attestation
   name: 'google/cloud-sdk:latest'
