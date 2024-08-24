@@ -3,14 +3,10 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Build docker image - SHORT_SHA
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA', '.' ]
-  images:
-    - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA'
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Build docker image - latest
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '.' ]
-  images:
-    - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest'
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push docker image with SHA tag
@@ -70,3 +66,5 @@ steps:
 
 options:
     requestedVerifyOption: VERIFIED
+images:
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA'
