@@ -19,6 +19,7 @@ steps:
 
 - name: 'google/cloud-sdk:latest'
   id: get digest
+  entrypoint: 'sh'
   args:
   - -xe
   - -c
