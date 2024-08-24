@@ -15,7 +15,7 @@ const {google} = require('googleapis');
 // GET home page. 
 //curl -X GET localhost:8080
 router.get('/', function(req, res, next) {
-  res.render('index.html', { msg: process.env.HEADER_MSG ||" CICD test-1.0" 
+  res.render('index.html', { msg: process.env.HEADER_MSG ||" CICD test-v1.0" 
   ,app_version: version});
 //*/
 });
