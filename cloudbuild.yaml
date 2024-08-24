@@ -6,8 +6,14 @@ steps:
 
 
 - name: 'gcr.io/cloud-builders/docker'
-  id: Build docker image - SHA
-  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$COMMIT_SHA', '.' ]
+  id: Build docker image - latest
+  args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest', '.' ]
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: get digest
+  script: |
+      #!/bin/sh
+      docker inspect ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --format "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@{{.Id}}" >image_with_digest
 
 - id: test
   name: 'google/cloud-sdk:latest'
@@ -18,7 +24,7 @@ steps:
   - |
     gcloud beta container binauthz attestations sign-and-create \
       --project='$PROJECT_ID' \
-      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}@sha256:$COMMIT_SHA' \
+      --artifact-url=$(cat image_with_digest) \
       --attestor='projects/${PROJECT_ID}/attestors/built-by-cloud-build' \
       --attestor-project='$PROJECT_ID' \
       --keyversion-project='verified-builder' \
@@ -32,8 +38,8 @@ steps:
   args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA']
 
 - name: 'gcr.io/cloud-builders/docker'
-  id: Push docker image with full digest tag
-  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$COMMIT_SHA']
+  id: Push docker image with latest digest tag
+  args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:latest']
 
 # hack
 - name: 'google/cloud-sdk:latest'
@@ -41,7 +47,7 @@ steps:
   entrypoint: 'sh'
   args:
   - |
-    sed -i "s/my-app:latest/my-app:${COMMIT_SHA}/g" k8.yaml
+    sed -i "s/my-app:latest/my-app:${SHORT_SHA}/g" k8.yaml
 
 - name: 'google/cloud-sdk:latest'
   id: Trigger Cloud Deploy
@@ -52,7 +58,7 @@ steps:
   - |
     gcloud config set deploy/region ${_REGION}
     gcloud deploy apply --file clouddeploy-pipeline.yaml
-    gcloud deploy releases create ${_IMAGE}-$COMMIT_SHA \
+    gcloud deploy releases create ${_IMAGE}-$SHORT_SHA \
                         --delivery-pipeline=my-app-pipeline \
                         --skaffold-file=skaffold.yaml
 
