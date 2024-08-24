@@ -16,7 +16,7 @@ steps:
   - -xe
   - -c
   - |
-    gcloud artifacts docker images list ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --sort-by='UPDATE_TIME' --limit=1 --format='value(DIGEST)' > /workspace/digest
+    gcloud artifacts docker images list ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE} --sort-by='~UPDATE_TIME' --limit=1 --format='value(DIGEST)' > /workspace/digest
 
 - name: 'google/cloud-sdk:latest'
   id: get digest test
@@ -25,7 +25,7 @@ steps:
   - -xe
   - -c
   - |
-    echo  $(cat /workspace/digest)
+    echo  "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@$(cat /workspace/digest)"
 
 - id: attestation
   name: 'google/cloud-sdk:latest'
@@ -36,7 +36,7 @@ steps:
   - |
     gcloud beta container binauthz attestations sign-and-create \
       --project='$PROJECT_ID' \
-      --artifact-url='${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@$(cat /workspace/digest)' \
+      --artifact-url="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@$(cat /workspace/digest)" \
       --attestor='projects/${PROJECT_ID}/attestors/built-by-cloud-build' \
       --attestor-project='$PROJECT_ID' \
       --keyversion-project='verified-builder' \
