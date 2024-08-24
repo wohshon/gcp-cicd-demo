@@ -1,7 +1,7 @@
 steps:
 
 - name: 'gcr.io/cloud-builders/docker'
-  id: Build docker image - latest
+  id: Build docker image - SHORT_SHA
   args: [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA', '.' ]
 
 
