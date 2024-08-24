@@ -39,10 +39,10 @@ steps:
       --artifact-url="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}@$(cat /workspace/digest)" \
       --attestor='projects/${PROJECT_ID}/attestors/built-by-cloud-build' \
       --attestor-project='$PROJECT_ID' \
-      --keyversion-project='verified-builder' \
+      --keyversion-project='$PROJECT_ID' \
       --keyversion-location='${_REGION}' \
-      --keyversion-keyring='attestor' \
-      --keyversion-key='builtByGCB' \
+      --keyversion-keyring='attestkeyring-1' \
+      --keyversion-key='attestkey' \
       --keyversion='1'
 
 # hack
