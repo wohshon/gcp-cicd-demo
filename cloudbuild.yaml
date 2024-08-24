@@ -24,7 +24,7 @@ steps:
   - -xe
   - -c
   - |
-    gcloud builds describe $BUILD_ID  --format 'value(results.images[0].digest)' > /workspace/digest
+    gcloud builds describe $BUILD_ID  --region ${_REGION} --format 'value(results.images[0].digest)' > /workspace/digest
 
 - id: attestation
   name: 'google/cloud-sdk:latest'
