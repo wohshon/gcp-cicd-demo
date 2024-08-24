@@ -24,9 +24,9 @@ steps:
   - -xe
   - -c
   - |
-    gcloud artifacts docker images describe  ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA --format 'value(image_summary.digest)' > /workspace/digest
+    gcloud builds describe $BUILD_ID --format json \| jq -r '.results.images[] | select(.name=="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_ART_REGISTRY}/${_IMAGE}:$SHORT_SHA") | .digest' > /workspace/digest
 
-- id: test
+- id: attestation
   name: 'google/cloud-sdk:latest'
   entrypoint: 'sh'
   args:
