@@ -19,11 +19,16 @@ build:
     - image: asia-southeast1-docker.pkg.dev/sandbox-project-1673797795/demoapp-repo/my-app
       docker:
         dockerfile: Dockerfile
-deploy:
-  kubectl:
-    remoteManifests:
-      - manifests/pipeline/k8s.yaml
 manifests:
   rawYaml:
     - manifests/dev/ingress.yaml
     - manifests/dev/k8s.yaml
+profiles:
+  - name: staging
+    manifests:
+      rawYaml:
+        - manifests/pipeline/k8s.yaml
+  - name: prod
+    manifests:
+      rawYaml:
+        - manifests/pipeline/k8s.yaml
