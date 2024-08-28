@@ -21,7 +21,7 @@ build:
         dockerfile: Dockerfile
 manifests:
   rawYaml:
-    - manifests/dev/ingress.yaml
+#    - manifests/dev/ingress.yaml
     - manifests/dev/k8s.yaml
 profiles:
   - name: staging
