@@ -12,9 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: skaffold/v2beta16
+apiVersion: skaffold/v4beta11
 kind: Config
+build:
+  artifacts:
+    - image: asia-southeast1-docker.pkg.dev/sandbox-project-1673797795/demoapp-repo/my-app
+      docker:
+        dockerfile: Dockerfile
 deploy:
   kubectl:
-    manifests:
-      - k8.yaml
+    remoteManifests:
+      - manifests/pipeline/k8s.yaml
+manifests:
+  rawYaml:
+    - manifests/dev/ingress.yaml
+    - manifests/dev/k8s.yaml

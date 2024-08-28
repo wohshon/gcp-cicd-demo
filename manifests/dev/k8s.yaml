@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: dev
+spec: {}
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app1
+  name: app1
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: app1
+    spec:
+      containers:
+      - image: asia-southeast1-docker.pkg.dev/sandbox-project-1673797795/demoapp-repo/my-app:latest
+        name: app1
+        env:
+        - name: PORT
+          value: "8080"
+        - name: DEMO_BACKEND_URL
+          value: "http://app2.demoapp.svc.cluster.local:8080/app2/submitData"
+        resources: {}
+        imagePullPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app1
+  name: app1
+  namespace: dev
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}' # Creates a NEG after an Ingress is created    
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: app1

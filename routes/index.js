@@ -3,7 +3,7 @@ var router = express.Router();
 const axios = require('axios');
 const requestIp = require('request-ip')
 
-const version = process.env.VERSION || 'v1.1';
+const version = process.env.VERSION || 'v1.0';
 
 //***test */
 const {GoogleAuth} = require('google-auth-library');
