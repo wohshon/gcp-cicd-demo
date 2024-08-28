@@ -36,5 +36,6 @@ apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
  name: prod
+ requireApproval: true
 gke:
  cluster: projects/sandbox-project-1673797795/locations/asia-southeast1/clusters/autopilot-cluster-2
