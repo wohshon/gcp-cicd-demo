@@ -27,8 +27,8 @@ profiles:
   - name: staging
     manifests:
       rawYaml:
-        - manifests/pipeline/k8s.yaml
+        - manifests/pipeline/staging/k8s.yaml
   - name: prod
     manifests:
       rawYaml:
-        - manifests/pipeline/k8s.yaml
+        - manifests/pipeline/prod/k8s.yaml
