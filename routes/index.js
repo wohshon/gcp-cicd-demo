@@ -15,7 +15,7 @@ const {google} = require('googleapis');
 // GET home page. 
 //curl -X GET localhost:8080
 router.get('/', function(req, res, next) {
-  res.render('index.html', { msg: process.env.HEADER_MSG ||"CICD on Google Cloud" 
+  res.render('index.html', { msg: process.env.HEADER_MSG ||"CICD on Google Cloud - Dev" 
   ,app_version: version});
 //*/
 });
