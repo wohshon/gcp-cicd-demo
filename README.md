@@ -20,6 +20,10 @@ kubectl apply -f manifests/pipeline/ingress.yaml --context <staging cluster>
 kubectl apply -f manifests/pipeline/ingress.yaml --context <prod cluster>
 ```
 
+#### basic flow
+- make changes in codes during inner-loop , watch skaffold picks up changes 
+- commit codes to repo, watch cloud deploy picks up changes and user approval flow 
+
 #### binary auth, 
 - To test binary auth, create a binary auth following the doc, 
 
